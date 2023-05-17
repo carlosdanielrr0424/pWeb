@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Bootstrap css-->
+    <link rel="stylesheet" href="/modules/bootstrap/dist/css/bootstrap.min.css">
+    <!-- Bootstrap font icons css-->
+    <link rel="stylesheet" href="/modules/bootstrap-icons/font/bootstrap-icons.css">
+    <!-- My style-->
+    <link rel="stylesheet" href="/resources/css/style.css">
+    
+    <title>Sistema para la gestión de aseguramientos de actividades extracurriculares Facultad 4</title>
+</head>
+
+<body>
+
+  <header>
+    <!-- Sidebar -->
+    <nav id="sidebarMenu" class="collapse d-lg-block sidebar collapse bg-white">
+      <div class="position-sticky">
+        <div class="list-group list-group-flush mx-3 mt-4">
+          <a href="/pantallaGenerica" class="list-group-item list-group-item-action py-2 ripple" aria-current="true">
+            <i class="bi bi-house-fill me-3"></i><span>Menú principal</span>
+          </a>
+
+          <a href="/admin/responderSolicitudes" class="list-group-item list-group-item-action py-2 ripple" aria-current="true">
+            <i class="bi bi-person-vcard-fill me-3"></i><span>Resp. solicitudes</span>
+          </a>
+
+          <a href="/admin/usuarios" class="list-group-item list-group-item-action py-2 ripple" aria-current="true">
+            <i class="bi bi-people-fill me-3"></i><span>Usuarios</span>
+          </a>
+
+          <a href="/admin/aseguramientos" class="list-group-item list-group-item-action py-2 ripple" aria-current="true">
+            <i class="bi bi-box-fill me-3"></i><span>Aseguramientos</span>
+          </a>
+
+          <a href="/admin/generarReporte" class="list-group-item list-group-item-action py-2 ripple" aria-current="true">
+            <i class="bi bi-bar-chart-line-fill me-3"></i><span>Generar reporte</span>
+          </a>
+        </div>
+      </div>
+    </nav>
+    <!-- Sidebar -->
+  
+    <!-- Navbar -->
+    <nav id="main-navbar" class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow-sm">
+      <!-- Container wrapper -->
+      <div class="container-fluid">
+        <!-- Brand -->
+        <a class="navbar-brand" href="#">
+          <img class="h-100 ms-3" src="/resources/svg/logo_color.svg" width="128">
+        </a>
+
+        <ul class="navbar-nav ms-auto d-flex flex-row">
+          <!--Notification item-->
+          <li class="nav-item me-3">
+            <a class="nav-link me-lg-0" href="#" role="button">
+              <span class="position-relative top-0 start-100 translate-middle badge rounded-pill bg-danger">#</span>
+              <img src="/resources/svg/bell-fill.svg">
+            </a>
+          </li>
+          <!--Notification item-->
+          
+          <!--Profile dropdown-->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <%= usuario.nombre %> <%= usuario.apellidos %>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="/cambiarContrasenna">Cambiar contraseña</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="/cerrarSesion">Cerrar sesión</a></li>
+            </ul>
+          </li>
+          <!--Profile dropdown-->
+        </ul>
+
+        
+
+      </div>
+      <!-- Container wrapper -->
+    </nav>
+    <!-- Navbar -->
+  </header>
+
+  <div class="main-container">
+    <section class="py-3">
+      <div class="container">
+        <h1 class="fw-bold mb-0">Generar reporte</h1>
+        <p class="lead text-muted">Juega con los filtros disponibles</p>
+      </div>
+    </section>
+
+    <section>
+        <div class="container">
+            
+        </div>
+    </section>
+          
+  </div>
+
+  <!--jQuery-->
+  <script src="../../jquery/jquery-3.6.0.min.js" type="text/javascript"></script>
+  <script src="../../jquery/jquery.validate.min.js"></script>
+  <!--Popper-->
+  <script src="/modules/@popperjs/core/dist/umd/popper.min.js" type="text/javascript"></script>
+  <!--Bootstrap js-->
+  <script src="/modules/bootstrap/dist/js/bootstrap.min.js" type="text/javascript"></script>
+  <!--My scripts-->
+  
+  <!--SweetAlert2 js-->
+  <script src="/modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
+
+  <% if(typeof alerta != "undefined") { %>
+    <script>
+      Swal.fire({
+        title: '<%= tituloAlerta %>',
+        icon: '<%= iconoAlerta %>',
+        showConfirmButton: true,
+        timer: 2500
+      }).then(()=>{
+        window.location = '<%= rutaAlerta %>';
+      })
+    </script>
+  <% } %>
+  
+</body>
+</html>

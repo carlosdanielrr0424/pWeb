@@ -1,0 +1,102 @@
+const strftime = require('strftime');
+const Solicitud = require('./dataClass/Solicitud');
+
+const repositorio = {};
+
+repositorio.actualizarVista = (req, res) => {
+    if(req.session.autenticado){
+        req.getConnection((error, connection) =>{
+            if(error){
+                console.log('Ha ocurrido un error: ' + error);
+            }else{
+                connection.query('SELECT solic.id, solic.nombre, solic.lugar, solic.area, solic.fecha_hora, solic.estado, GROUP_CONCAT(CONCAT(aseg.id, "//", aseg.nombre, "//", solic_aseg.cantidad) SEPARATOR "///") AS aseguramientos FROM solicitud solic LEFT JOIN solicitud_aseguramiento solic_aseg ON solic.id = solic_aseg.solicitud_id LEFT JOIN aseguramiento aseg ON aseg.id = solic_aseg.aseguramiento_id WHERE solic.usuario_id = ? GROUP BY solic.id', [req.session.usuario.id], (error, results) => {
+                    if(error){
+                        console.log('Ha ocurrido un error: ' + error);
+                    }else{
+                        const solicitudes = results.map(result => new Solicitud(result.id, result.usuario_id, result.nombre, result.lugar, result.area, strftime('%d/%m/%Y %I:%M:%S %p', result.fecha_hora), result.estado, result.aseguramientos));
+
+                        res.render('areaManager/solicitudes', {
+                            usuario: req.session.usuario,
+                            solicitudes: solicitudes
+                        });
+                    }
+                });
+            }
+        });
+    }else{
+        res.redirect('/');
+    }
+};
+
+repositorio.buscarSolicitudesPorNombre = (req, res) => {
+    if(req.session.autenticado){
+        req.getConnection((error, connection) =>{
+            const{nombre} = req.params;
+
+            if(error){
+                console.log('Ha ocurrido un error: ' + error);
+            }else{
+                connection.query('SELECT solic.id, solic.nombre, solic.lugar, solic.area, solic.fecha_hora, solic.estado, GROUP_CONCAT(CONCAT(aseg.id, "//", aseg.nombre, "//", solic_aseg.cantidad) SEPARATOR "///") AS aseguramientos FROM solicitud solic LEFT JOIN solicitud_aseguramiento solic_aseg ON solic.id = solic_aseg.solicitud_id LEFT JOIN aseguramiento aseg ON aseg.id = solic_aseg.aseguramiento_id WHERE solic.usuario_id = ? AND LOWER(solic.nombre) LIKE ? GROUP BY solic.id', [req.session.usuario.id, '%' + nombre + '%'], (error, results) => {
+                    if(error){
+                        console.log('Ha ocurrido un error: ' + error);
+                    }else{
+                        const solicitudes = results.map(result => new Solicitud(result.id, result.usuario_id, result.nombre, result.lugar, result.area, strftime('%d/%m/%Y %I:%M:%S %p', result.fecha_hora), result.estado, result.aseguramientos));
+
+                        console.log(solicitudes);
+
+                        res.render('areaManager/solicitudes', {
+                            usuario: req.session.usuario,
+                            solicitudes: solicitudes
+                        });
+                    }
+                });
+            }
+        });
+    }else{
+        res.redirect('/');
+    }
+};
+
+repositorio.vistaNuevaSolicitud = (req, res) => {
+    if(req.session.autenticado){
+        res.render('areaManager/nuevaSolicitud', {
+            usuario: req.session.usuario 
+        });
+    }else{
+        res.redirect('/');
+    }
+}
+
+repositorio.eliminarSolicitud = (req, res) => {
+    if(req.session.autenticado){
+        const {id} = req.params;
+
+        req.getConnection(async (error, connection) =>{
+            if(error){
+                console.log('Ha ocurrido un error: ' + error);
+            }else{
+                connection.query('DELETE FROM solicitud WHERE id = ?', [id], (error, rows) => {
+                    if(error){
+                        console.log('Ha ocurrido un error: ' + error);
+                    }else{
+                        mostrarMensaje(req, res, 'areaManager/solicitudes', 'Solicitud eliminada correctamente', 'success', '/areaManager/solicitudes');
+                    }
+                })
+            }
+        });
+    }else{
+        res.redirect('/');
+    }
+};
+
+function mostrarMensaje(req, res, vista, titulo, icono, ruta) {
+    res.render(vista, {
+        usuario: req.session.usuario,
+        alerta: true,
+        tituloAlerta: titulo,
+        iconoAlerta: icono,
+        rutaAlerta: ruta,
+    });
+}
+
+module.exports = repositorio;
