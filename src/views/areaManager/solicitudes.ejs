@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -38,6 +38,9 @@
     <nav id="main-navbar" class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow-sm">
       <!-- Container wrapper -->
       <div class="container-fluid">
+        <!-- Toggle button -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation"><i class="bi bi-list"></i></button>
+
         <!-- Brand -->
         <a class="navbar-brand" href="#">
           <img class="h-100 ms-3" src="/resources/svg/logo_color.svg" width="128">
@@ -46,8 +49,8 @@
         <ul class="navbar-nav ms-auto d-flex flex-row">
           <!--Notification item-->
           <li class="nav-item me-3">
-            <a class="nav-link me-lg-0" href="#" role="button">
-              <span class="position-relative top-0 start-100 translate-middle badge rounded-pill bg-danger">#</span>
+            <a class="nav-link me-lg-0" href="/areaManager/notificaciones" role="button">
+              <span class="position-relative top-0 start-100 translate-middle badge rounded-pill bg-danger"><%= notificaciones %></span>
               <img src="/resources/svg/bell-fill.svg">
             </a>
           </li>
@@ -97,75 +100,194 @@
         </div>    
       </div>
     </section>
-      <div class="container mt-4">
-        <h6 class="text-muted mb-2">Mis solicitudes</h6>
+      <% if(typeof(solicitudesPendientes) != "undefined" && solicitudesPendientes.length != 0) { %>
+        <div class="container mt-4">
+          <h6 class="text-muted mb-2">Solicitudes pendientes</h6>
+          <div class="list-group">
+              <% for (var i = 0; i < solicitudesPendientes.length; i++){ %>
+                <div class="list-group-item" aria-current="true">
+                  <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1"><%= solicitudesPendientes[i].nombre %></h5>
+                    <small><%= solicitudesPendientes[i].fecha_hora %></small>
+                  </div>
 
-        <div class="list-group">
-          <% if(typeof(solicitudes) != "undefined") { %>
-            <% for (var i = 0; i < solicitudes.length; i++){ %>
-              <div class="list-group-item" aria-current="true">
-                <div class="d-flex w-100 justify-content-between">
-                  <h5 class="mb-1"><%= solicitudes[i].nombre %></h5>
-                  <small><%= solicitudes[i].fecha_hora %></small>
-                </div>
-
-                <div class="d-flex align-self-center mt-2">
-                  <h6><i class="bi bi-geo-alt-fill"></i>Lugar:</h6>
-                  <small class="ms-2"><%= solicitudes[i].lugar %></small>
-                </div>
-    
-                <div class="d-flex align-self-center">
-                  <h6><i class="bi bi-tag-fill"></i>Área:</h6>
-                  <small class="ms-2"><%= solicitudes[i].area %></small>
-                </div>
-    
-                <hr class="hr" />
-    
-                <div class="d-flex align-self-center">
-                  <h6><i class="bi bi-box-fill me-1"></i>Aseguramientos:</h6>
-                </div>
-    
-                <table class="table">
-                  <thead>
-                    <tr>
-                      <th scope="col">#</th>
-                      <th scope="col">Nombre</th>
-                      <th scope="col">Cantidad</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <%
-                      var aseguramientos = solicitudes[i].aseguramientos.split("///");
-                    %>
-
-                    <% for (var h = 0; h < aseguramientos.length; h++) { %>
-                      <% var aseguramiento = aseguramientos[h].split("//")%>
-
+                  <div class="d-flex align-self-center mt-2">
+                    <h6><i class="bi bi-geo-alt-fill"></i>Lugar:</h6>
+                    <small class="ms-2"><%= solicitudesPendientes[i].lugar %></small>
+                  </div>
+      
+                  <hr class="hr" />
+      
+                  <div class="d-flex align-self-center">
+                    <h6><i class="bi bi-box-fill me-1"></i>Aseguramientos:</h6>
+                  </div>
+      
+                  <table class="table">
+                    <thead>
                       <tr>
-                        <th scope="row"><%= h+1 %></th>
-                        <td><%= aseguramiento[1] %></td>
-                        <td><%= aseguramiento[2] %></td>
+                        <th scope="col">#</th>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Cantidad</th>
+                        <th scope="col">Acciones</th>
                       </tr>
-                    <% } %>
-                  </tbody>
-                </table>
-    
-                <div class="d-flex justify-content-end w-100">
-                  <button class="btn btn-primary" onclick="window.location.href='/areaManager/editarSolicitud/<%= solicitudes[i].id %>'">Editar</button>
-                  <button class="btn btn-danger ms-2" onclick="mostrarConfirmacionEliminar('¿Desea eliminar esta solicitud?', '<%= solicitudes[i].id %>', '<%= usuario.id %>')">Eliminar</button>
+                    </thead>
+                    <tbody>
+                      
+                      <%
+                        var aseguramientosPendientes = solicitudesPendientes[i].aseguramientos ? solicitudesPendientes[i].aseguramientos.split("///") : [];
+                      %>
+
+                      <% for (var h = 0; h < aseguramientosPendientes.length; h++) { %>
+                        <% var aseguramientoPendiente = aseguramientosPendientes[h].split("//")%>
+
+                        <tr>
+                          <th scope="row"><%= h+1 %></th>
+                          <td><%= aseguramientoPendiente[1] %></td>
+                          <td><%= aseguramientoPendiente[2] %></td>
+                          <td>
+                            <div class="d-flex justify-content-end w-100">
+                              <button name="btnEditarAseguramientoSolicitud" id="btnEditarAseguramientoSolicitud" class="btn btn-outline-primary" onclick="window.location.href='/areaManager/editarAseguramientoSolicitud/<%= solicitudesPendientes[i].id %>/<%= aseguramientoPendiente[0] %>'"><i class="bi bi-pencil-fill"></i></button>
+                              <button name="btnEliminarAseguramientoSolicitud" id="btnEliminarAseguramientoSolicitud" class="btn btn-outline-danger ms-2" onclick="mostrarConfirmacionEliminarAseguramientoSolicitud('¿Desea eliminar este aseguramiento?', '<%= solicitudesPendientes[i].id %>', '<%= aseguramientoPendiente[0]%>')"><i class="bi bi-trash-fill"></i></button>
+                            </div>
+                          </td>
+                        </tr>
+                      <% } %>
+                    </tbody>
+                  </table>
+      
+                  <div class="d-flex justify-content-end w-100">
+                    <button class="btn btn-primary" onclick="window.location.href='/areaManager/agregarAseguramientoSolicitud/<%= solicitudesPendientes[i].id %>'"><i class="bi bi-plus-square-fill"></i></button>
+                    <button class="btn btn-primary ms-2" onclick="window.location.href='/areaManager/editarSolicitud/<%= solicitudesPendientes[i].id %>'"><i class="bi bi-pencil-fill"></i></button>
+                    <button class="btn btn-danger ms-2" onclick="mostrarConfirmacionEliminarSolicitud('¿Desea eliminar esta solicitud?', '<%= solicitudesPendientes[i].id %>')"><i class="bi bi-trash-fill"></i></button>
+                  </div>
                 </div>
-              </div>
-            <% } %>
-          <% } %>
+              <% } %>
+          </div>
         </div>
-      </div>
+      <% } %>
+
+      <% if(typeof(solicitudesAprobadas) != "undefined" && solicitudesAprobadas.length != 0) { %>
+        <div class="container mt-4">
+          <h6 class="text-muted mb-2">Solicitudes aprobadas</h6>
+          <div class="list-group">
+              <% for (var i = 0; i < solicitudesAprobadas.length; i++){ %>
+                <div class="list-group-item" aria-current="true">
+                  <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1"><%= solicitudesAprobadas[i].nombre %></h5>
+                    <small><%= solicitudesAprobadas[i].fecha_hora %></small>
+                  </div>
+
+                  <div class="d-flex align-self-center mt-2">
+                    <h6><i class="bi bi-geo-alt-fill"></i>Lugar:</h6>
+                    <small class="ms-2"><%= solicitudesAprobadas[i].lugar %></small>
+                  </div>
+      
+                  <hr class="hr" />
+      
+                  <div class="d-flex align-self-center">
+                    <h6><i class="bi bi-box-fill me-1"></i>Aseguramientos:</h6>
+                  </div>
+      
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Cantidad</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      
+                      <%
+                        var aseguramientosAprobados = solicitudesAprobadas[i].aseguramientos ? solicitudesAprobadas[i].aseguramientos.split("///") : [];
+                      %>
+
+                      <% for (var h = 0; h < aseguramientosAprobados.length; h++) { %>
+                        <% var aseguramientoAprobado = aseguramientosAprobados[h].split("//")%>
+
+                        <tr>
+                          <th scope="row"><%= h+1 %></th>
+                          <td><%= aseguramientoAprobado[1] %></td>
+                          <td><%= aseguramientoAprobado[2] %></td>
+                        </tr>
+                      <% } %>
+                    </tbody>
+                  </table>
+      
+                  <div class="d-flex justify-content-end w-100">
+                    <button class="btn btn-danger ms-2" onclick="mostrarConfirmacionEliminarSolicitud('¿Desea eliminar esta solicitud?', '<%= solicitudesAprobadas[i].id %>')"><i class="bi bi-trash-fill"></i></button>
+                  </div>
+                </div>
+              <% } %>
+          </div>
+        </div>
+      <% } %>
+
+      <% if(typeof(solicitudesDenegadas) != "undefined" && solicitudesDenegadas.length != 0) { %>
+        <div class="container mt-4">
+          <h6 class="text-muted mb-2">Solicitudes denegadas</h6>
+          <div class="list-group">
+              <% for (var i = 0; i < solicitudesDenegadas.length; i++){ %>
+                <div class="list-group-item" aria-current="true">
+                  <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1"><%= solicitudesDenegadas[i].nombre %></h5>
+                    <small><%= solicitudesDenegadas[i].fecha_hora %></small>
+                  </div>
+
+                  <div class="d-flex align-self-center mt-2">
+                    <h6><i class="bi bi-geo-alt-fill"></i>Lugar:</h6>
+                    <small class="ms-2"><%= solicitudesDenegadas[i].lugar %></small>
+                  </div>
+      
+                  <hr class="hr" />
+      
+                  <div class="d-flex align-self-center">
+                    <h6><i class="bi bi-box-fill me-1"></i>Aseguramientos:</h6>
+                  </div>
+      
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Cantidad</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      
+                      <%
+                        var aseguramientosDenegados = solicitudesDenegadas[i].aseguramientos ? solicitudesDenegadas[i].aseguramientos.split("///") : [];
+                      %>
+
+                      <% for (var h = 0; h < aseguramientosDenegados.length; h++) { %>
+                        <% var aseguramientoDenegado = aseguramientosDenegados[h].split("//")%>
+
+                        <tr>
+                          <th scope="row"><%= h+1 %></th>
+                          <td><%= aseguramientoDenegado[1] %></td>
+                          <td><%= aseguramientoDenegado[2] %></td>
+                        </tr>
+                      <% } %>
+                    </tbody>
+                  </table>
+      
+                  <div class="d-flex justify-content-end w-100">
+                    <button class="btn btn-danger ms-2" onclick="mostrarConfirmacionEliminarSolicitud('¿Desea eliminar esta solicitud?', '<%= solicitudesDenegadas[i].id %>')"><i class="bi bi-trash-fill"></i></button>
+                  </div>
+                </div>
+              <% } %>
+          </div>
+        </div>
+      <% } %>
+
+      <% if(typeof(solicitudesDenegadas) != "undefined" && solicitudesDenegadas.length == 0 && typeof(solicitudesPendientes) != "undefined" && solicitudesPendientes.length == 0 && typeof(solicitudesAprobadas) != "undefined" && solicitudesAprobadas.length == 0) { %>
+        <h6 class="ms-3 mt-4">No hay solicitudes para mostrar</h6>
+      <% } %>  
     <section>
 
     </section>
   </div>
 
-  <!--jQuery-->
-  <script src="../../jquery/jquery-3.6.0.min.js" type="text/javascript"></script>
   <!--Popper-->
   <script src="/modules/@popperjs/core/dist/umd/popper.min.js" type="text/javascript"></script>
   <!--Bootstrap js-->

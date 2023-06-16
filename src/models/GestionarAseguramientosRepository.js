@@ -1,0 +1,194 @@
+const Aseguramiento = require('./dataClass/Aseguramiento');
+
+const repositorio = {};
+
+repositorio.actualizarVista = (req, res) => {
+    if(req.session.autenticado && req.session.usuario.rol == 'admin'){
+        req.getConnection((error, connection) =>{
+            if(error){
+                console.log('Ha ocurrido un error: ' + error);
+            }else{
+                connection.query('SELECT * FROM aseguramiento', (error, results) => {
+                    if(error){
+                        console.log('Ha ocurrido un error: ' + error);
+                    }else{
+                        const aseguramientos = results.map(result => new Aseguramiento(result.id, result.nombre));
+    
+                        res.render('admin/aseguramientos', {
+                            usuario: req.session.usuario,
+                            aseguramientos: aseguramientos
+                        });
+                    }
+                });
+            }
+        });
+    }else{
+        res.redirect('/');
+    }
+};
+
+repositorio.buscarAseguramientosPorNombre = (req, res) => {
+    if(req.session.autenticado && req.session.usuario.rol == 'admin'){
+        req.getConnection((error, connection) =>{
+            const{nombre} = req.params;
+
+            if(error){
+                console.log('Ha ocurrido un error: ' + error);
+            }else{
+                connection.query('SELECT * FROM aseguramiento WHERE LOWER(nombre) LIKE ?', ['%' + nombre + '%'], (error, results) => {
+                    if(error){
+                        console.log('Ha ocurrido un error: ' + error);
+                    }else{
+                        const aseguramientos = results.map(result => new Aseguramiento(result.id, result.nombre));
+    
+                        res.render('admin/aseguramientos', {
+                            usuario: req.session.usuario,
+                            aseguramientos: aseguramientos
+                        });
+                    }
+                });
+            }
+        });
+    }else{
+        res.redirect('/');
+    }
+};
+
+repositorio.vistaNuevoAseguramiento = (req, res) => {
+    if(req.session.autenticado && req.session.usuario.rol == 'admin'){
+        res.render('admin/nuevoAseguramiento', {
+            usuario: req.session.usuario 
+        });
+    }else{
+        res.redirect('/');
+    }
+}
+
+repositorio.nuevoAseguramiento = (req, res) => {
+    if(req.session.autenticado && req.session.usuario.rol == 'admin'){
+        req.getConnection(async (error, connection) =>{  
+            if(error){
+                console.log('Ha ocurrido un error: ' + error);
+            }else{
+                comprobarSiExisteAseguramiento(req, res)
+            }
+        });
+    }else{
+        res.redirect('/');
+    }
+};
+
+repositorio.buscarAseguramientoID = (req, res) => {
+    if(req.session.autenticado && req.session.usuario.rol == 'admin'){
+        const {id} = req.params;
+
+        req.getConnection(async (error, connection) =>{
+            if(error){
+                console.log('Ha ocurrido un error: ' + error);
+            }else{
+                connection.query('SELECT * FROM aseguramiento WHERE id = ?', [id], (error, aseguramiento) => {
+                    if(error){
+                        console.log('Ha ocurrido un error: ' + error);
+                    }else{
+                        const dataAseguramiento = {
+                            id: aseguramiento[0].id,
+                            nombre: aseguramiento[0].nombre,
+                        };
+    
+                        res.render('admin/editarAseguramiento', {
+                            usuario: req.session.usuario,
+                            aseguramiento: dataAseguramiento,
+                        });
+                    }
+                });
+            }
+        });
+    }else{
+        res.redirect('/');
+    }
+}
+
+repositorio.editarAseguramiento = (req, res) => {
+    if(req.session.autenticado && req.session.usuario.rol == 'admin'){
+        req.getConnection(async (error, connection) =>{
+            const{id} = req.params;
+            const nombre = req.body.inputNombreEA;
+    
+            if(error){
+                console.log('Ha ocurrido un error: ' + error);
+            }else{
+                connection.query('UPDATE aseguramiento set ? WHERE id = ?', [{nombre:nombre}, id], async(error, results)=>{
+                    if(error){
+                        console.log('Ha ocurrido un error: ' + error);
+                    }else{
+                        mostrarMensaje(req, res, 'admin/editarAseguramiento', 'El aseguramiento ha sido modificado correctamente', 'success', '/admin/aseguramientos');
+                    }
+                });
+            }
+        });
+    }else{
+        res.redirect('/');
+    }
+};
+
+repositorio.eliminarAseguramiento = (req, res) => {
+    if(req.session.autenticado && req.session.usuario.rol == 'admin'){
+        const {id} = req.params;
+
+        req.getConnection(async (error, connection) =>{
+            if(error){
+                console.log('Ha ocurrido un error: ' + error);
+            }else{
+                connection.query('DELETE FROM aseguramiento WHERE id = ?', [id], (error, rows) => {
+                    if(error){
+                        console.log('Ha ocurrido un error: ' + error);
+                    }else{
+                        mostrarMensaje(req, res, 'admin/aseguramientos', 'Aseguramiento eliminado correctamente', 'success', '/admin/aseguramientos');
+                    }
+                })
+            }
+        });
+    }else{
+        res.redirect('/');
+    }
+};
+
+async function comprobarSiExisteAseguramiento(req, res){
+    req.getConnection(async (error, connection) =>{
+        const nombre = req.body.inputNombreNA;
+
+        if(error){
+            console.log('Ha ocurrido un error: ' + error);
+        }else{
+            connection.query('SELECT * FROM aseguramiento WHERE nombre = ?', [nombre], (error, results) => {
+                if(error){
+                    console.log('Ha ocurrido un error: ' + error);
+                }else{
+                    if(results.length == 0){
+                        connection.query('INSERT INTO aseguramiento SET ?', {nombre:nombre}, async(error, results)=>{
+                            if(error){
+                                console.log('Ha ocurrido un error: ' + error);
+                            }else{
+                                mostrarMensaje(req, res, 'admin/nuevoAseguramiento', 'El aseguramiento ha sido registrado correctamente', 'success', '/admin/aseguramientos');
+                            }
+                        })
+                    }else{
+                        mostrarMensaje(req, res, 'admin/nuevoAseguramiento', 'El aseguramiento ya existe', 'success', '/admin/nuevoAseguramiento');
+                    }
+                }
+            });
+        }
+    })
+}
+
+function mostrarMensaje(req, res, vista, titulo, icono, ruta) {
+    res.render(vista, {
+        usuario: req.session.usuario,
+        alerta: true,
+        tituloAlerta: titulo,
+        iconoAlerta: icono,
+        rutaAlerta: ruta,
+    });
+}
+ 
+module.exports = repositorio;

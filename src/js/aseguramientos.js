@@ -4,6 +4,15 @@ function buscarAseguramientosPorNombre() {
     window.location.href = '/admin/aseguramientos/' + nombre;
 }
 
+function mostrarMensajeNoElementos(){
+  Swal.fire({
+    title: 'No se encontraron aseguramientos',
+    icon: 'success',
+    showConfirmButton: true,
+    timer: 2500
+  })
+}
+
 function mostrarConfirmacionEliminar(mensaje, id){
     Swal.fire({
       title: mensaje,

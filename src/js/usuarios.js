@@ -4,6 +4,15 @@ function buscarUsuariosPorNombre() {
     window.location.href = '/admin/usuarios/' + nombre;
 }
 
+function mostrarMensajeNoElementos(){
+  Swal.fire({
+    title: 'No se encontraron usuarios',
+    icon: 'success',
+    showConfirmButton: true,
+    timer: 2500
+  })
+}
+
 function mostrarConfirmacionEliminar(mensaje, id){
     Swal.fire({
       title: mensaje,
@@ -20,4 +29,4 @@ function mostrarConfirmacionEliminar(mensaje, id){
         window.location = '/admin/usuarios';
       }
     });
-  }
+}

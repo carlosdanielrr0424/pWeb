@@ -22,10 +22,10 @@ repositorio.comprobarContrasenna = (req, res) => {
                     if(error){
                         console.log('Ha ocurrido un error: ' + error);
                     }else{
-                        if(results == 0 || !(await bcryptjs.compare(req.body.contrasennaActual, results[0].contrasenna))){
+                        if(results == 0 || !(await bcryptjs.compare(req.body.inputContrasennaActualCC, results[0].contrasenna))){
                             mostrarMensaje(req, res, 'cambiarContrasenna', 'La contraseña actual es incorrecta', 'error', '/cambiarContrasenna');
                         }else{
-                            cambiarContrasenna(req, res, await encriptarContrasenna(req.body.nuevaContrasenna));
+                            cambiarContrasenna(req, res, await encriptarContrasenna(req.body.inputNuevaContrasennaCC));
                         }
                     }
                 });

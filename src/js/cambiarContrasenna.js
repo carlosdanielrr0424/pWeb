@@ -1,21 +1,21 @@
-var nuevaContrasenna = document.getElementById("nuevaContrasenna");
-var confirmarContrasenna = document.getElementById("confirmarContrasenna");
+var nuevaContrasenna = document.getElementById("inputNuevaContrasennaCC");
+var confirmarContrasenna = document.getElementById("inputConfirmarContrasennaCC");
 
-function validarContrasennas() {
+function chequearConfirmacionContrasenna() {
     if (nuevaContrasenna.value !== confirmarContrasenna.value) {
-        confirmarContrasenna.setCustomValidity("Las contraseñas no coinciden");
+        confirmarContrasenna.setCustomValidity("Confirme correctamente la contraseña");
     } else {
         confirmarContrasenna.setCustomValidity("");
     }
 }
 
-nuevaContrasenna.addEventListener("input", validarContrasennas);
-  confirmarContrasenna.addEventListener("input", validarContrasennas);
+nuevaContrasenna.addEventListener("input", chequearConfirmacionContrasenna);
+  confirmarContrasenna.addEventListener("input", chequearConfirmacionContrasenna);
 
 function mostrarContrasennas() {
-    var contrasennaActual = document.getElementById('contrasennaActual');
-    var nuevaContrasenna = document.getElementById('nuevaContrasenna');
-    var confirmarContrasenna = document.getElementById('confirmarContrasenna');
+    var contrasennaActual = document.getElementById('inputContrasennaActualCC');
+    var nuevaContrasenna = document.getElementById('inputNuevaContrasennaCC');
+    var confirmarContrasenna = document.getElementById('inputConfirmarContrasennaCC');
     var iMostrarContrasennas = document.getElementById('iMostrarContrasennas');
 
     if (iMostrarContrasennas.checked) {

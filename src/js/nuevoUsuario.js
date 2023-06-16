@@ -1,6 +1,6 @@
 function mostrarContrasenna() {
-    var contrasenna = document.getElementById('contrasenna');
-    var iMostrarContrasenna = document.getElementById('iMostrarContrasenna');
+    var contrasenna = document.getElementById('inputContrasennaNU');
+    var iMostrarContrasenna = document.getElementById('iMostrarContrasennaNU');
 
     if (iMostrarContrasenna.checked) {
         contrasenna.type = 'text';

@@ -17,8 +17,21 @@ repositorio.vistaPantallaGenerica = (req, res) => {
             break;
 
             case 'areaManager':
-                res.render('areaManager/pantallaGenerica', {
-                    usuario: req.session.usuario
+                req.getConnection(async (error, connection) =>{
+                    if(error){
+                        console.log('Ha ocurrido un error: ' + error);
+                    }else{
+                        connection.query('SELECT COUNT(*) AS notificaciones FROM notificacion WHERE usuario_id = ? AND visto = "no"', [req.session.usuario.id], async(error, results) => {
+                            if(error){
+                                console.log('Ha ocurrido un error: ' + error);
+                            }else{
+                                res.render('areaManager/pantallaGenerica', {
+                                    usuario: req.session.usuario,
+                                    notificaciones: results[0].notificaciones
+                                });
+                            }
+                        });
+                    }
                 });
             break;
         }
@@ -28,8 +41,8 @@ repositorio.vistaPantallaGenerica = (req, res) => {
 }
 
 repositorio.iniciarSesion = async (req, res) => {
-    const usuario = req.body.usuario;
-    const contrasenna = req.body.contrasenna;
+    const usuario = req.body.inputUsuarioAU;
+    const contrasenna = req.body.inputContrasennaAU;
 
     comprobarCredenciales(req, res, usuario, contrasenna);
 }

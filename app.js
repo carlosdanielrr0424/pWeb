@@ -53,10 +53,12 @@ const cGestionarSolicitudes = require('./src/controllers/GestionarSolicitudesCon
 app.use('/', cGestionarSolicitudes);  
 const cResponderSolicitudes = require('./src/controllers/ResponderSolicitudesController');
 app.use('/', cResponderSolicitudes);  
-const cUsuarios = require('./src/controllers/UsuariosController');
+const cUsuarios = require('./src/controllers/GestionarUsuariosController');
 app.use('/', cUsuarios);
-const cAseguramientos = require('./src/controllers/AseguramientosController');
+const cAseguramientos = require('./src/controllers/GestionarAseguramientosController');
 app.use('/', cAseguramientos);
+const cNotificaciones = require('./src/controllers/ControlarNotificacionesController');
+app.use('/', cNotificaciones);  
 const cGenerarReporte = require('./src/controllers/GenerarReporteController');
 app.use('/', cGenerarReporte);  
 

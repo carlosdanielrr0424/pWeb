@@ -1,6 +1,6 @@
-$(document).ready(function () {
-    const inputFechaHora = document.getElementById("inputFechaHoraNS");
-    const spanFechaHora = document.getElementById("spanFechaHora");
+﻿$(document).ready(function () {
+    const inputFechaHora = document.getElementById("inputFechaHoraES");
+    const spanFechaHora = document.getElementById("spanFechaHoraES");
 
     // Inicializa flatpickr en el botón
     const datetimePicker = flatpickr(spanFechaHora, {
